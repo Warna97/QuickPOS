@@ -1,12 +1,27 @@
 import { Routes } from '@angular/router';
-import { provideRouter } from '@angular/router';
-import { ProductsPageComponent } from './pages/products/products.component';
+import { authGuard } from './guards/auth.guard';
 
-export const appRoutes: Routes = [
-  { path: '', redirectTo: '/products', pathMatch: 'full' }, // Redirect root to products
-  { path: 'products', component: ProductsPageComponent },
-  // Add other routes as needed
+export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: '/products',
+    pathMatch: 'full'
+  },
+  {
+    path: 'login',
+    loadChildren: () => import('./pages/auth/auth.routes')
+      .then(m => m.AUTH_ROUTES)
+  },
+  {
+    path: 'products',
+    loadChildren: () => import('./pages/products/products.routes')
+      .then(m => m.PRODUCT_ROUTES),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'orders',
+    loadChildren: () => import('./pages/orders/orders.routes')
+      .then(m => m.ORDER_ROUTES),
+    canActivate: [authGuard]
+  }
 ];
-
-export const appRoutingProviders = [provideRouter(appRoutes)];
-
